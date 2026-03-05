@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenangan · Cerita & Galeri</title>
+    <!-- Font Awesome & Google Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(145deg, #ff4d4d 0%, #ff8c42 100%);
+            min-height: 100vh;
+            padding: 2rem 1.2rem;
+        }
+
+        /* warna dominan merah, oranye, putih */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(4px);
+            border-radius: 4rem 4rem 3rem 3rem;
+            box-shadow: 0 35px 60px -15px #b33e1f;
+            padding: 2rem 2rem 3rem;
+            border: 3px solid #ffa66b;
+        }
+
+        /* header membara */
+        .header-kenangan {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .header-kenangan h1 {
+            font-size: 3.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #b11f1f, #f75c1e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 6px 6px 0 #ffe3c9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .header-kenangan h1 i {
+            background: #ff4f1e;
+            color: white;
+            padding: 0.4rem 0.8rem;
+            border-radius: 70% 30% 60% 40% / 50% 40% 60% 50%;
+            font-size: 3rem;
+            box-shadow: 0 10px 0 #a03200;
+        }
+
+        .header-kenangan p {
+            font-size: 1.5rem;
+            background: #ff7722;
+            color: white;
+            padding: 0.8rem 2.5rem;
+            border-radius: 60px;
+            display: inline-block;
+            box-shadow: 0 8px 0 #b13f00, 0 15px 25px #f5763b;
+            border: 2px solid #fff3c9;
+        }
+
+        /* GRID CERITA (thumbnail) */
+        .cerita-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .cerita-card {
+            background: #fff7ec;
+            border-radius: 50px 50px 35px 35px;
+            padding: 20px 20px 25px;
+            border: 4px solid #fc7b3b;
+            box-shadow: 0 15px 0 #bd3d0e, 0 25px 30px #ff7f4f;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .cerita-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 0 #bd3d0e, 0 35px 40px #ff6633;
+        }
+
+        .thumbnail-luar {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: #ffc29e;
+            border-radius: 40px 40px 25px 25px;
+            overflow: hidden;
+            border: 4px solid white;
+            outline: 3px solid #f44f1b;
+            margin-bottom: 20px;
+        }
+
+        .thumbnail-luar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .judul-cerita {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ac1f00;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #ffcdb0;
+            padding: 5px 18px;
+            border-radius: 40px;
+            margin-bottom: 8px;
+            border: 2px solid #ff8855;
+        }
+
+        .judul-cerita i {
+            background: #ff3f00;
+            color: white;
+            border-radius: 50%;
+            padding: 10px;
+            font-size: 1.2rem;
+        }
+
+        .tahun-cerita {
+            color: #c54700;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-left: 10px;
+        }
+
+        /* MODAL CERITA (fullscreen story + galeri) */
+        .modal-story {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(240, 95, 30, 0.85);
+            backdrop-filter: blur(7px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-story.active {
+            display: flex;
+        }
+
+        .modal-konten {
+            background: #fffaf2;
+            max-width: 900px;
+            width: 100%;
+            max-height: 85vh;
+            border-radius: 70px 70px 50px 50px;
+            border: 6px solid #ffffff;
+            box-shadow: 0 30px 0 #b13500, 0 40px 50px black;
+            padding: 30px 35px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .tombol-tutup {
+            position: sticky;
+            top: 0;
+            float: right;
+            background: #ff4817;
+            color: white;
+            font-size: 2.5rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 4px solid #ffe7d0;
+            box-shadow: 0 6px 0 #942d00;
+            transition: 0.05s linear;
+            z-index: 10;
+        }
+
+        .tombol-tutup:active {
+            transform: translateY(5px);
+            box-shadow: 0 1px 0 #942d00;
+        }
+
+        .cerita-lengkap {
+            margin-top: 10px;
+            clear: both;
+        }
+
+        .cerita-lengkap h2 {
+            font-size: 2.7rem;
+            background: linear-gradient(145deg, #ff3300, #ff704d);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            border-left: 18px solid #f4591a;
+            padding-left: 20px;
+            margin: 20px 0;
+        }
+
+        .cerita-lengkap p {
+            background: #ffe3d1;
+            padding: 25px;
+            border-radius: 50px;
+            font-size: 1.25rem;
+            line-height: 1.7;
+            color: #701d00;
+            border: 3px dashed #ff8655;
+            box-shadow: inset 0 2px 10px #ffbf9f;
+        }
+
+        /* galeri kecil di dalam modal */
+        .sub-galeri {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 18px;
+            margin: 30px 0 15px;
+        }
+
+        .foto-kenang {
+            background: #ff8a5c;
+            border-radius: 35px;
+            padding: 12px 12px 8px;
+            border: 3px solid white;
+            outline: 3px solid #ff5e2a;
+        }
+
+        .foto-kenang img {
+            width: 100%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 25px;
+            background: #fecbb2;
+            border: 2px solid #ffc7ad;
+        }
+
+        .foto-kenang figcaption {
+            text-align: center;
+            color: #a13b00;
+            font-weight: 600;
+            margin-top: 6px;
+            font-size: 1rem;
+        }
+
+        /* warna putih, merah, oranye dominan */
+        .btn-close {
+            background: #ff5e1a;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #fff9e6;
+            font-weight: 600;
+            text-shadow: 3px 3px 0 #cf5000;
+        }
+
+        /* scrollbar custom */
+        .modal-konten::-webkit-scrollbar {
+            width: 16px;
+        }
+        .modal-konten::-webkit-scrollbar-track {
+            background: #ffbc8c;
+            border-radius: 20px;
+        }
+        .modal-konten::-webkit-scrollbar-thumb {
+            background: #ff3c00;
+            border-radius: 20px;
+            border: 3px solid #ffba91;
+        }
+
+        /* error handling gambar */
+        .thumbnail-luar img.error {
+            background: #ffbc8c;
+            position: relative;
+        }
+        
+        .thumbnail-luar img.error::after {
+            content: "📷";
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-kenangan">
+            <h1>
+                <i class="fas fa-book-open"></i> 
+                kenangan alumni ke 26
+                <i class="fas fa-fire"></i>
+            </h1>
+            <p><i class="fas fa-camera"></i> klik foto atau icon untuk baca cerita & foto di dalamnya</p>
+        </div>
+
+        <!-- grid kartu cerita (thumbnail) -->
+        <div class="cerita-grid" id="ceritaGrid">
+            <!-- Cerita 1: P5 KE TMII -->
+            <div class="cerita-card" data-id="1">
+                <div class="thumbnail-luar">
+                    <img src="Gemini_Generated_Image_ir7o4tir7o4tir7o.png" alt="liburan jogja" loading="lazy">
+                </div>
+                <div class="judul-cerita">
+                    <i class="fas fa-umbrella-beach"></i> P5 KE TMII
+                    <span class="tahun-cerita">2024</span>
+                </div>
+                <div style="color:#c44d1a; display:flex; gap:15px; font-size:1.1rem; margin-left:10px;">
+                    <i class="fas fa-images"></i> 2 kenangan
+                </div>
+            </div>
+
+            <!-- Cerita 2: MENGUNJUNGI MONAS -->
+            <div class="cerita-card" data-id="2">
+                <div class="thumbnail-luar">
+                    <img src="Gemini_Generated_Image_mp6b4fmp6b4fmp6b.png" alt="sma" loading="lazy">
+                </div>
+                <div class="judul-cerita">
+                    <i class="fas fa-graduation-cap"></i> KE MONAS
+                    <span class="tahun-cerita">2023</span>
+                </div>
+                <div style="color:#c44d1a; display:flex; gap:15px; font-size:1.1rem; margin-left:10px;">
+                    <i class="fas fa-images"></i> 4 kenangan
+                </div>
+            </div>
+
+            <!-- Cerita 3: Keluarga di Bandung -->
+            <div class="cerita-card" data-id="3">
+                <div class="thumbnail-luar">
+                    <img src="Gemini_Generated_Image_qw635kqw635kqw63.png" alt="keluarga bandung" loading="lazy">
+                </div>
+                <div class="judul-cerita">
+                    <i class="fas fa-home"></i> PERJUSA
+                    <span class="tahun-cerita">2023</span>
+                </div>
+                <div style="color:#c44d1a; display:flex; gap:15px; font-size:1.1rem; margin-left:10px;">
+                    <i class="fas fa-images"></i> 5 kenangan
+                </div>
+            </div>
+
+            <!-- Cerita 4: Pelangi setelah hujan -->
+            <div class="cerita-card" data-id="4">
+                <div class="thumbnail-luar">
+                    <img src="Gemini_Generated_Image_cyo1jkcyo1jkcyo1.png" alt="pelangi" loading="lazy">
+                </div>
+                <div class="judul-cerita">
+                    <i class="fas fa-cloud-rain"></i> RANDOM KENANGAN
+                    <span class="tahun-cerita">2021-2026</span>
+                </div>
+                <div style="color:#c44d1a; display:flex; gap:15px; font-size:1.1rem; margin-left:10px;">
+                    <i class="fas fa-images"></i> 10 kenangan
+                </div>
+            </div>
+
+            <!-- Cerita 5: Kucing liar kesayangan -->
+            <div class="cerita-card" data-id="5">
+                <div class="thumbnail-luar">
+                    <img src="From Main Klickpin CF- Uploaded by user - 2JbFD0qNr.jpg" alt="kucing" loading="lazy">
+                </div>
+                <div class="judul-cerita">
+                    <i class="fas fa-cat"></i> MABAR ML
+                    <span class="tahun-cerita">2022-2025</span>
+                </div>
+                <div style="color:#c44d1a; display:flex; gap:15px; font-size:1.1rem; margin-left:10px;">
+                    <i class="fas fa-images"></i> 200 kenangan
+                </div>
+            </div>
+
+            <!-- Cerita 6: camping gunung -->
+            <div class="cerita-card" data-id="6">
+                <div class="thumbnail-luar">
+                    <img src="Gemini_Generated_Image_5c2vji5c2vji5c2v.png" alt="camping" loading="lazy">
+                </div>
+                <div class="judul-cerita">
+                    <i class="fas fa-campground"></i> SDN PEKAYON 15
+                    <span class="tahun-cerita">2021</span>
+                </div>
+                <div style="color:#c44d1a; display:flex; gap:15px; font-size:1.1rem; margin-left:10px;">
+                    <i class="fas fa-images"></i> 4 kenangan
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL (cerita + galeri) akan diisi lewat js -->
+    <div id="storyModal" class="modal-story">
+        <div class="modal-konten" id="modalKonten">
+            <div class="tombol-tutup" id="closeModalBtn"><i class="fas fa-times"></i></div>
+            <div id="modalDalam" class="cerita-lengkap">
+                <!-- konten dinamis dari js -->
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <i class="fas fa-heart" style="color: #ffddc0;"></i>  SETIAP MASA PASTI ADA KENANGANNYA  <i class="fas fa-heart" style="color: #ffb08a;"></i>
+    </footer>
+
+    <script>
+        (function() {
+            // Data cerita lengkap (foto-foto + cerita)
+            const stories = {
+                1: {
+                    judul: "P5 KE TMII",
+                    tahun: "2024",
+                    cerita: "Waktu itu kita pergi ke TMII (Taman Mini Indonesia Indah) untuk belajar dan mengetahui keragaman budaya di Indonesia",
+                    fotoDalam: [
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" }
+                    ]
+                },
+                2: {
+                    judul: "KE MONAS",
+                    tahun: "2023",
+                    cerita: "Saat itu sekolah mengadakan jalan jalan untuk pergi ke Monas, kita pergi ke Monas bukan hanya untuk jalan jalan tetapi untuk mempelajari cara naik MRT dan LRT juga",
+                    fotoDalam: [
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" }
+                    ]
+                },
+                3: {
+                    judul: "PERJUSA",
+                    tahun: "2025",
+                    cerita: "Saat itu kita akan melakukan perjusa karna saat itu kak Tengkuh bilang jika kita pramukanya bagus akan diadain perjusa, Saat itu kita menyiapkan semua peralatan dan makanan yang perlu dibawa saat sudah ingin pulang kita di prank bahwa tidak ada pemadam kebakaran karna kita terlalu banyak membuang waktu dan pas semua orang sedih tiba tiba kita disiram air oleh pemadam",
+                    fotoDalam: [
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" }
+                    ]
+                },
+                4: {
+                    judul: "KENANGAN RANDOM",
+                    tahun: "2020-2026",
+                    cerita: "Banyak kenangan yang sudah kita lalui saat sekolah jadi jangan sia siakan waktu yang tersisa",
+                    fotoDalam: [
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" }
+                    ]
+                },
+                5: {
+                    judul: "MABAR ML",
+                    tahun: "2022-2026",
+                    cerita: "Banyak season telah kita lalui, season sebelumnya kita hanyalah epic dan season selanjutnya rank kita naik perlahan lahan hingga kita sampai di titik legend adalah rank yang mudah",
+                    fotoDalam: [
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" }
+                    ]
+                },
+                6: {
+                    judul: "SDN PEKAYON 15",
+                    tahun: "2020",
+                    cerita: "kita sekolah di sekolah yang sangat bagus dan indah yaitu sekolah SDN PEKAYON 15 PAGI",
+                    fotoDalam: [
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" },
+                        { url: "hitam polos.jpg", caption: "foto bareng" }
+                    ]
+                }
+            };
+
+            const modal = document.getElementById('storyModal');
+            const modalDalam = document.getElementById('modalDalam');
+            const closeBtn = document.getElementById('closeModalBtn');
+            const cards = document.querySelectorAll('.cerita-card');
+
+            // Handler error gambar
+            function handleImageError(img) {
+                img.onerror = null; // Prevent infinite loop
+                img.src = 'https://picsum.photos/300/300?random=' + Math.random();
+                img.alt = 'Gambar tidak tersedia';
+            }
+
+            // Tambahkan error handler ke semua gambar thumbnail
+            document.querySelectorAll('.thumbnail-luar img').forEach(img => {
+                img.addEventListener('error', function() {
+                    handleImageError(this);
+                });
+            });
+
+            // buka modal saat card diklik
+            cards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    const id = this.getAttribute('data-id');   // "1", "2" ...
+                    const story = stories[id];
+                    if (!story) return;
+
+                    // bangun html untuk modal
+                    let html = `
+                        <h2><i class="fas fa-bookmark" style="color:#ff5e1a;"></i> ${story.judul} · ${story.tahun}</h2>
+                        <p>${story.cerita}</p>
+                        <div style="margin: 30px 0 15px; display:flex; gap:15px; align-items:center;">
+                            <i class="fas fa-camera-retro" style="font-size:2rem; color:#ff5f1a;"></i>
+                            <span style="font-size:1.7rem; font-weight:600; color:#c13300;">GALERI FOTO DALAM CERITA</span>
+                        </div>
+                        <div class="sub-galeri">
+                    `;
+
+                    story.fotoDalam.forEach(foto => {
+                        html += `
+                            <figure class="foto-kenang">
+                                <img src="${foto.url}" alt="${foto.caption}" loading="lazy" onerror="this.onerror=null; this.src='https://picsum.photos/300/300?random=' + Math.random();">
+                                <figcaption><i class="fas fa-heart" style="color:#ff3300;"></i> ${foto.caption}</figcaption>
+                  
